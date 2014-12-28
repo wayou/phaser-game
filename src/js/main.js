@@ -8,12 +8,14 @@ var mainState = {
 
         game.load.image('bird', 'assets/bird.png');
         game.load.image('pipe', 'assets/pipe.png');
+        game.load.audio('jump', 'assets/jump.wav');
     },
     create: function() {
         //enable physics
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.bird = game.add.sprite(100, 245, 'bird');
+        this.bird.anchor.setTo(-0.2, 0.5);
 
         //enable gravity on the bird
         game.physics.arcade.enable(this.bird);
@@ -31,6 +33,8 @@ var mainState = {
             fill: '#ffffff'
         });
 
+        this.jumpSnd = game.add.audio('jump');
+
         var spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spaceKey.onDown.add(this.jump, this);
     },
@@ -38,11 +42,39 @@ var mainState = {
         if (!this.bird.inWorld) {
             this.restartGame();
         }
-        game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+        game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
+
+        if (this.bird.angle < 20) {
+            this.bird.angle += 1;
+        }
+
+    },
+    hitPipe: function() {
+        if (!this.bird.alive) {
+            return;
+        }
+        this.bird.alive = false;
+
+        //prevent new pipes appearing
+        game.time.events.remove(this.timer);
+
+        this.pipes.forEachAlive(function(p) {
+            p.body.velocity.x = 0;
+        }, this);
 
     },
     jump: function() {
+        if (!this.bird.alive) {
+            return;
+        }
         this.bird.body.velocity.y = -350;
+
+        this.jumpSnd.play();
+
+        game.add.tween(this.bird).to({
+            angle: -20
+        }, 100).start();
+
     },
     restartGame: function() {
         game.state.start('main');
