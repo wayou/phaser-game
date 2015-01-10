@@ -16,6 +16,7 @@ window.onload = function() {
         game.load.audio('jump', '../assets/jump.wav');
     }
 
+<<<<<<< HEAD
     var platforms,
         player,
         cursors,
@@ -24,6 +25,9 @@ window.onload = function() {
         scoreTxt,
         baddies,
         jumpSound;
+=======
+var game = new Phaser.Game(400, 490, Phaser.AUTO, '');
+>>>>>>> 1d6b4b0cd78343c6cc893f34369cb2a5241f20c2
 
     function create() {
 
@@ -178,3 +182,8 @@ window.onload = function() {
 
 };
 
+<<<<<<< HEAD
+=======
+game.state.add('main', mainState);
+game.state.start('main');
+>>>>>>> 1d6b4b0cd78343c6cc893f34369cb2a5241f20c2
